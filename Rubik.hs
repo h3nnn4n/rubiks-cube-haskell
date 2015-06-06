@@ -4,10 +4,10 @@ module Rubik where
 -- TODO: Insert the notion of orientation
 
 -- A Cube is made out of a set of Edge and a set of Corner
-data Cube = Cube [Edge] [Corner] deriving (Show)
-data Edge = Edge Facet Facet deriving (Show)
-data Corner = Corner Facet Facet Facet deriving (Show)
-data Facet = Red | Orange | Yellow | White | Green | Blue deriving (Show)
+data Cube = Cube [Edge] [Corner] deriving (Show, Eq)
+data Edge = Edge Facet Facet deriving (Show, Eq)
+data Corner = Corner Facet Facet Facet deriving (Show, Eq)
+data Facet = Red | Orange | Yellow | White | Green | Blue deriving (Show, Eq)
 
 -- The Edges in the top layer
 uf = Edge White Red
@@ -45,6 +45,13 @@ solved = Cube [uf, ul, ub, ur, fr, fl, bl, br, df, dl, db, dr] [ufr, ufl, ubl, u
 move_U :: Cube -> Cube
 move_U (Cube (a:b:c:d:e:f:g:h:i:j:k:l) (m:n:o:p:q:r:s:t)) = (Cube (d:a:b:c:e:f:g:h:i:j:k:l) (p:m:n:o:q:r:s:t))
 
-move_U2 = do move_U
-             move_U
+-- Since a cube face is a rotation group it is possible to define U2 as U two times and U' as U three times
+move_U2 x = move_U $ move_U x
 
+move_U' x = move_U $ move_U $ move_U x
+
+-- Some simple tests
+-- it should return True always
+test = and $ [solved == solved
+            , move_U solved == (move_U' $ move_U' $ move_U' solved)
+            , move_U ( move_U solved ) == move_U' (move_U' solved)]
