@@ -13,10 +13,10 @@ data Facet = Red | Orange | Yellow | White | Green | Blue deriving (Show, Eq) --
 
 -- -- All the cublets -- --
 -- The Edges in the top layer
-uf = (Edge White Red     )
-ur = (Edge White Blue    )
-ub = (Edge White Orange  )
-ul = (Edge White Green   )
+uf = (Edge White  Red    )
+ur = (Edge White  Blue   )
+ub = (Edge White  Orange )
+ul = (Edge White  Green  )
 
 -- The Edges in the middle layer
 fr = (Edge Red    Blue   )
@@ -45,16 +45,36 @@ ld = (Edge Green  Yellow )
 bd = (Edge Orange Yellow )
 
 -- The Corners in the top layer
-ufr = (Corner White Red Blue)
-ufl = (Corner White Red Green)
-ubr = (Corner White Orange Blue)
-ubl = (Corner White Orange Green)
+ufr = (Corner White Red Blue     )
+ufl = (Corner White Red Green    )
+ubr = (Corner White Orange Blue  )
+ubl = (Corner White Orange Green )
 
 -- The Corners in the buttom layer
-dfr = (Corner Yellow Red Blue)
-dfl = (Corner Yellow Red Green)
-dbr = (Corner Yellow Orange Blue)
+dfr = (Corner Yellow Red Blue    )
+dfl = (Corner Yellow Red Green   )
+dbr = (Corner Yellow Orange Blue )
 dbl = (Corner Yellow Orange Green)
+
+-- The Clockwise rotation of all base (the ones above) corners
+fru = (Corner Red    Blue  White )
+flu = (Corner Red    Green White )
+bru = (Corner Orange Blue  White )
+blu = (Corner Orange Green White )
+frd = (Corner Red    Blue  Yellow)
+fld = (Corner Red    Green Yellow)
+brd = (Corner Orange Blue  Yellow)
+bld = (Corner Orange Green Yellow)
+
+-- The Counter-Clockwise rotation of all base (the ones above) corners
+ruf = (Corner Blue  White  Red   )
+luf = (Corner Green White  Red   )
+rub = (Corner Blue  White  Orange)
+lub = (Corner Green White  Orange)
+rdf = (Corner Blue  Yellow Red   )
+ldf = (Corner Green Yellow Red   )
+rdb = (Corner Blue  Yellow Orange)
+ldb = (Corner Green Yellow Orange)
 
 -- A function ta returns the inverse of a edge
 -- It is obviously correct, unless there is some typo :)
@@ -85,10 +105,41 @@ inverted (Edge Yellow Green  ) = (Edge Green  Yellow )
 inverted (Edge Yellow Orange ) = (Edge Orange Yellow )
 
 -- Clockwise rotation of a corner piece
--- TODO
+-- The Corners in the top layer
+
+turn_cw (Corner White  Red    Blue ) = (Corner Red    Blue  White )
+turn_cw (Corner White  Red    Green) = (Corner Red    Green White )
+turn_cw (Corner White  Orange Blue ) = (Corner Orange Blue  White )
+turn_cw (Corner White  Orange Green) = (Corner Orange Green White )
+turn_cw (Corner Yellow Red    Blue ) = (Corner Red    Blue  Yellow)
+turn_cw (Corner Yellow Red    Green) = (Corner Red    Green Yellow)
+turn_cw (Corner Yellow Orange Blue ) = (Corner Orange Blue  Yellow)
+turn_cw (Corner Yellow Orange Green) = (Corner Orange Green Yellow)
+
+turn_cw (Corner Red    Blue  White ) = (Corner Blue  White  Red   )
+turn_cw (Corner Red    Green White ) = (Corner Green White  Red   )
+turn_cw (Corner Orange Blue  White ) = (Corner Blue  White  Orange)
+turn_cw (Corner Orange Green White ) = (Corner Green White  Orange)
+turn_cw (Corner Red    Blue  Yellow) = (Corner Blue  Yellow Red   )
+turn_cw (Corner Red    Green Yellow) = (Corner Green Yellow Red   )
+turn_cw (Corner Orange Blue  Yellow) = (Corner Blue  Yellow Orange)
+turn_cw (Corner Orange Green Yellow) = (Corner Green Yellow Orange)
+
+turn_cw (Corner Blue  White  Red   ) = (Corner White  Red    Blue )
+turn_cw (Corner Green White  Red   ) = (Corner White  Red    Green)
+turn_cw (Corner Blue  White  Orange) = (Corner White  Orange Blue )
+turn_cw (Corner Green White  Orange) = (Corner White  Orange Green)
+turn_cw (Corner Blue  Yellow Red   ) = (Corner Yellow Red    Blue )
+turn_cw (Corner Green Yellow Red   ) = (Corner Yellow Red    Green)
+turn_cw (Corner Blue  Yellow Orange) = (Corner Yellow Orange Blue )
+turn_cw (Corner Green Yellow Orange) = (Corner Yellow Orange Green)
 
 -- Counter-Clockwise rotation of a corner piece
--- TODO
+-- Since the orientation of corners is a group,
+-- one can define a Counter-Clockwise rotation as two Clockwise rotations
+-- it is simpler and more compact but probably not as effiencient as
+-- redefining everything as we did above
+turn_ccw x = turn_cw $ turn_cw x
 
 -- The cube in a solved state
 solved = (Cube (Edges uf  ul  ub  ur
@@ -113,7 +164,6 @@ move_U' x = move_U $ move_U $ move_U x
 move_R (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges a b c e l f g d i j k h) (Corners q n o m t r s p))
 move_R2 x = move_R $ move_R x
 move_R' x = move_R $ move_R $ move_R x
-
 
 
 -- Some simple tests
