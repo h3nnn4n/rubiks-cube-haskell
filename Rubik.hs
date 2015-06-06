@@ -49,6 +49,9 @@ solved = (Cube (Edges uf  ul  ub  ur
               (Corners ufr  ufl  ubl  ubr
                        dfr  dfl  dbl  dbr))
 
+-- Returns true if the cube is solved
+isSolved x = x == solved
+
 --move_U :: Cube -> Cube
 move_U (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges d a b c e f g h i j k l) (Corners p m n o q r s t))
 
@@ -59,10 +62,15 @@ move_U' x = move_U $ move_U $ move_U x
 
 --move_R :: Cube -> Cube
 move_R (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges a b c e l f g d i j k h) (Corners q n o m t r s p))
+move_R2 x = move_R $ move_R x
+move_R' x = move_R $ move_R $ move_R x
+
 
 
 -- Some simple tests
 -- it should return True always
 test = and $ [solved == solved
             , move_U solved == (move_U' $ move_U' $ move_U' solved)
-            , move_U ( move_U solved ) == move_U' (move_U' solved)]
+            , move_U ( move_U solved ) == move_U' (move_U' solved)
+            , move_R ( move_R solved ) == move_R' (move_R' solved)
+            , move_R2 (solved )        == move_R' (move_R' solved) ]
