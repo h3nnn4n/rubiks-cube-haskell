@@ -240,9 +240,11 @@ move_B (Cube (Edges a b c d e f g h i j k l)
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Since the expression is evaluated right to left, we must write the Cube algorithm reversed
+-- Ua perm
 -- R2 U' R' U' R U R U R U' R
 perm_ua x = move_R2 $ move_U' $ move_R' $ move_U' $ move_R $ move_U $ move_R $ move_U $ move_R $ move_U' $ move_R x
 
+-- Ub perm
 -- R' U R' U' R' U' R' U R U R2
 perm_ub x = move_R' $ move_U $ move_R' $ move_U' $ move_R' $ move_U' $ move_R' $ move_U $ move_R $ move_U $ move_R2 x
 
@@ -266,6 +268,46 @@ perm_f x = move_R $ move_U $ move_R' $ move_U $ move_R $ move_U' $ move_R' $ mov
 -- U R' U' R U' R U R U' R' U R U R2 U' R' U
 perm_z x = move_U $ move_R' $ move_U' $ move_R2 $ move_U $ move_R $ move_U $ move_R' $ move_U' $ move_R $ move_U $ move_R $ move_U' $ move_R $ move_U' $ move_R' $ move_U x
 
+-- Y perm
+-- F R U' R' F D R' B' R' B R2 D' F2
+perm_y x = move_F2 $ move_D' $ move_R2 $ move_B $ move_R' $ move_B' $ move_R' $ move_D $ move_F $ move_R' $ move_U' $ move_R $ move_F x
+
+-- H perm
+-- R2 B2 F2 L2 D R2 B2 F2 L2
+perm_h x = move_L2 $ move_F2 $ move_B2 $ move_R2 $ move_D $ move_L2 $ move_F2 $ move_B2 $ move_R2 x
+
+-- Aa perm
+-- R' F R' B2 R F' R' B2 R2
+perm_aa x = move_R2 $ move_B2 $ move_R' $ move_F' $ move_R $ move_B2 $ move_R' $ move_F $ move_R' x
+
+-- Ab perm
+-- F2 R2 F L F' R2 F L' F
+perm_ab x = move_F $ move_L' $ move_F $ move_R2 $ move_F' $ move_L $ move_F $ move_R2 $ move_F2 x
+
+-- E perm
+-- F R B R' F' R L F L' B' L F' R' L'
+perm_e x = move_L' $ move_R' $ move_F' $ move_L $ move_B' $ move_L' $ move_F $ move_L $ move_R $ move_F' $ move_R' $ move_B $ move_R $ move_F x
+
+-- Ra perm
+-- R U2 R' U2 R B' R' U' R U R B R2
+perm_ra x = move_R2 $ move_B $ move_R $ move_U $ move_R $ move_U' $ move_R' $ move_B' $ move_R $ move_U2 $ move_R' $ move_U2 $ move_R x
+
+-- Rb perm
+-- R' U2 R U2 R' F R U R' U' R' F' R2
+perm_rb x = move_R2 $ move_F' $ move_R' $ move_U' $ move_R' $ move_U $ move_R $ move_F $ move_R' $ move_U2 $ move_R $ move_U2 $ move_R' x
+
+-- Na perm
+-- L' U L2 F2 U L' F2 L U' F2 L2 U' L
+perm_na x = move_L $ move_U' $ move_L2 $ move_F2 $ move_U' $ move_L $ move_F2 $ move_L' $ move_U $ move_F2 $ move_L2 $ move_U $ move_L' x
+
+-- Nb perm
+-- R U' R2 F2 U' R F2 R' U F2 R2 U R'
+perm_nb x = move_R' $ move_U $ move_R2 $ move_F2 $ move_U $ move_R' $ move_F2 $ move_R $ move_U' $ move_F2 $ move_R2 $ move_U' $ move_R x
+
+-- V perm
+-- R' U R' U' B' R' B2 U' B' U B' R B R
+perm_v x = move_R $ move_B $ move_R $ move_B' $ move_U $ move_B' $ move_U' $ move_B2 $ move_R' $ move_B' $ move_U' $ move_R' $ move_U $ move_R' x
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -285,6 +327,7 @@ dummy_rb x = move_B $ move_R x
 -- Finds the size of a cycle
 cycleSize x = 1 + (length $ takeWhile (\y -> isSolved y == False) $ iterate x (x solved))
 cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr, dummy_lu, dummy_lf, dummy_fl, dummy_bu, dummy_rb]
+perm_test = map cycleSize [perm_ua, perm_ub, perm_ja, perm_jb, perm_t, perm_f, perm_z, perm_y, perm_h, perm_aa, perm_ab, perm_h, perm_ra, perm_rb, perm_na, perm_nb, perm_v]
 
 -- Some simple tests
 -- it should return True always
