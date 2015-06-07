@@ -152,6 +152,8 @@ solved = (Cube (Edges uf  ul  ub  ur
 -- Returns true if the cube is solved
 isSolved x = x == solved
 
+--Sample Function for a move
+--move_I (Cube (Edges a b c d e f g h i j k l) FCorners m n o p q r s t)) = (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t))
 --move_U :: Cube -> Cube
 move_U (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges d a b c e f g h i j k l) (Corners p m n o q r s t))
 
@@ -161,10 +163,19 @@ move_U2 x = move_U $ move_U x
 move_U' x = move_U $ move_U $ move_U x
 
 --move_R :: Cube -> Cube
-move_R (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges a b c e l f g d i j k h) (Corners q n o m t r s p))
+move_R (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges a b c e l f g d i j k h) (Corners (turn_ccw q) n o (turn_cw m) (turn_cw t) r s (turn_ccw p)))
 move_R2 x = move_R $ move_R x
 move_R' x = move_R $ move_R $ move_R x
 
+move_F (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges (f) b c d (inverted a) (inverted i) g h (e) j k l) (Corners (turn_cw n) (turn_ccw r) o p (turn_cw m) (turn_ccw q) s t))
+move_F2 x = move_F $ move_F x
+move_F' x = move_F $ move_F $ move_F x
+
+-- Since the expression is evaluated right to left, we must write the Cube algorithm reversed
+-- R2 U' R' U' R U R U R U' R
+perm_ua x = move_R2 $ move_U' $ move_R' $ move_U' $ move_R $ move_U $ move_R $ move_U $ move_R $ move_U' $ move_R x
+-- R' U R' U' R' U' R' U R U R2
+perm_ub x = move_R' $ move_U $ move_R' $ move_U' $ move_R' $ move_U' $ move_R' $ move_U $ move_R $ move_U $ move_R2 x
 
 -- Some simple tests
 -- it should return True always
@@ -172,4 +183,8 @@ test = and $ [solved == solved
             , move_U solved == (move_U' $ move_U' $ move_U' solved)
             , move_U ( move_U solved ) == move_U' (move_U' solved)
             , move_R ( move_R solved ) == move_R' (move_R' solved)
-            , move_R2 (solved )        == move_R' (move_R' solved) ]
+            , perm_ub solved           == ( perm_ua $ perm_ua solved)
+            , move_R2 (solved )        == move_R' (move_R' solved)
+            , inverted uf == fu
+            , turn_cw flu == luf
+            ]
