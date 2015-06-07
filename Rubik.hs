@@ -180,10 +180,21 @@ move_F' x = move_F $ move_F $ move_F x
 move_F (Cube (Edges a b c d e f g h i j k l)
              (Corners m n o p q r s t)) =
              (Cube (Edges (f) b c d (inverted a) (inverted i) g h (e) j k l)
-             (Corners (turn_cw n)
-                      (turn_ccw r) o p
+             (Corners (turn_ccw n)
+                      (turn_cw r) o p
                       (turn_ccw m)
                       (turn_cw q) s t))
+
+move_L2 x = move_L $ move_L x
+move_L' x = move_L $ move_L $ move_L x
+
+move_L (Cube (Edges a b c d e f g h i j k l)
+           (Corners m n o p q r s t)) = (Cube
+             (Edges a f c d e j b h i g k l)
+           (Corners m (turn_ccw r)
+                      (turn_cw n) p q
+                      (turn_cw s)
+                      (turn_ccw o) t))
 
 -- Since the expression is evaluated right to left, we must write the Cube algorithm reversed
 -- R2 U' R' U' R U R U R U' R
@@ -197,10 +208,13 @@ dummy_ru x = move_U $ move_R x
 dummy_fu x = move_U $ move_F x
 dummy_rf x = move_F $ move_R x
 dummy_fr x = move_R $ move_F x
+dummy_lu x = move_U $ move_L' x
+dummy_lf x = move_L' $ move_F x
+dummy_fl x = move_L $ move_F' x
 
 -- Finds the size of a cycle
 cycleSize x = 1 + (length $ takeWhile (\y -> isSolved y == False) $ iterate x (x solved))
-cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr]
+cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr, dummy_lu, dummy_lf, dummy_fl]
 
 -- Some simple tests
 -- it should return True always
@@ -211,5 +225,6 @@ test = and $ [solved == solved
             , perm_ub solved           == ( perm_ua $ perm_ua solved)
             , move_R2 (solved )        == move_R' (move_R' solved)
             , inverted uf == fu
+            , and $ map (\x -> x == 105) cycleTest
             , turn_cw flu == luf
             ]
