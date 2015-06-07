@@ -229,11 +229,11 @@ move_B' x = move_B $ move_B $ move_B x
 
 move_B (Cube (Edges a b c d e f g h i j k l)
            (Corners m n o p q r s t)) = (Cube
-             (Edges a b h d e f c k i j g l)
-           (Corners m n (turn_ccw p)
+             (Edges a b (inverted h) d e f c (inverted k) i j g l)
+           (Corners m n (turn_cw p)
                         (turn_cw t) q r
                         (turn_ccw o)
-                        (turn_cw s)))
+                        (turn_ccw s)))
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
