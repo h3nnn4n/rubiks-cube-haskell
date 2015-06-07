@@ -156,8 +156,13 @@ isSolved x = x == solved
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
---Sample Function for a move
---move_I (Cube (Edges a b c d e f g h i j k l) FCorners m n o p q r s t)) = (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t))
+-- Identity move
+move_I (Cube (Edges a b c d e f g h i j k l)
+           (Corners m n o p q r s t)) = (Cube
+             (Edges a b c d e f g h i j k l)
+           (Corners m n o p q r s t))
+
+-------------------------------------------
 --move_U :: Cube -> Cube
 move_U (Cube (Edges a b c d e f g h i j k l)
            (Corners m n o p q r s t)) = (Cube
@@ -175,12 +180,12 @@ move_R2 x = move_R $ move_R x
 move_R' x = move_R $ move_R $ move_R x
 
 move_R (Cube (Edges a b c d e f g h i j k l)
-             (Corners m n o p q r s t)) =
-             (Cube (Edges a b c e l f g d i j k h)
-             (Corners (turn_ccw q) n o
-                      (turn_cw m)
-                      (turn_ccw t) r s
-                      (turn_cw p)))
+           (Corners m n o p q r s t)) = (Cube
+             (Edges a b c e l f g d i j k h)
+           (Corners (turn_ccw q) n o
+                    (turn_cw m)
+                    (turn_ccw t) r s
+                    (turn_cw p)))
 
 -------------------------------------------
 
@@ -191,9 +196,9 @@ move_F (Cube (Edges a b c d e f g h i j k l)
            (Corners m n o p q r s t)) = (Cube
              (Edges f b c d (inverted a) (inverted i) g h e j k l)
            (Corners (turn_ccw n)
-                      (turn_cw r) o p
-                      (turn_ccw m)
-                      (turn_cw q) s t))
+                    (turn_cw r) o p
+                    (turn_ccw m)
+                    (turn_cw q) s t))
 
 -------------------------------------------
 
@@ -207,6 +212,28 @@ move_L (Cube (Edges a b c d e f g h i j k l)
                       (turn_ccw s) p q
                       (turn_cw n)
                       (turn_ccw r) t))
+
+-------------------------------------------
+
+move_D2 x = move_D $ move_D x
+move_D' x = move_D $ move_D $ move_D x
+
+move_D (Cube (Edges a b c d e f g h i j k l)
+           (Corners m n o p q r s t)) = (Cube
+             (Edges a b c d e f g h j k l i)
+           (Corners m n o p r s t q))
+-------------------------------------------
+
+move_B2 x = move_B $ move_B x
+move_B' x = move_B $ move_B $ move_B x
+
+move_B (Cube (Edges a b c d e f g h i j k l)
+           (Corners m n o p q r s t)) = (Cube
+             (Edges a b h d e f c k i j g l)
+           (Corners m n (turn_ccw p)
+                        (turn_cw t) q r
+                        (turn_ccw o)
+                        (turn_cw s)))
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -235,6 +262,10 @@ perm_t x = move_F' $ move_R' $ move_U $ move_R $ move_U' $ move_R' $ move_U' $ m
 -- R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R
 perm_f x = move_R $ move_U $ move_R' $ move_U $ move_R $ move_U' $ move_R' $ move_U' $ move_R2 $ move_F $ move_R' $ move_U' $ move_R' $ move_U $ move_R $ move_F' $ move_U' $ move_R' x
 
+-- Z perm
+-- U R' U' R U' R U R U' R' U R U R2 U' R' U
+perm_z x = move_U $ move_R' $ move_U' $ move_R2 $ move_U $ move_R $ move_U $ move_R' $ move_U' $ move_R $ move_U $ move_R $ move_U' $ move_R $ move_U' $ move_R' $ move_U x
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -248,10 +279,12 @@ dummy_fr x = move_R $ move_F x
 dummy_lu x = move_U $ move_L x
 dummy_lf x = move_L $ move_F x
 dummy_fl x = move_L $ move_F x
+dummy_bu x = move_U $ move_B x
+dummy_rb x = move_B $ move_R x
 
 -- Finds the size of a cycle
 cycleSize x = 1 + (length $ takeWhile (\y -> isSolved y == False) $ iterate x (x solved))
-cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr, dummy_lu, dummy_lf, dummy_fl]
+cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr, dummy_lu, dummy_lf, dummy_fl, dummy_bu, dummy_rb]
 
 -- Some simple tests
 -- it should return True always
