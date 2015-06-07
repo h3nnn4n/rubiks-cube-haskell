@@ -163,19 +163,44 @@ move_U2 x = move_U $ move_U x
 move_U' x = move_U $ move_U $ move_U x
 
 --move_R :: Cube -> Cube
-move_R (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges a b c e l f g d i j k h) (Corners (turn_ccw q) n o (turn_cw m) (turn_cw t) r s (turn_ccw p)))
 move_R2 x = move_R $ move_R x
 move_R' x = move_R $ move_R $ move_R x
 
-move_F (Cube (Edges a b c d e f g h i j k l) (Corners m n o p q r s t)) = (Cube (Edges (f) b c d (inverted a) (inverted i) g h (e) j k l) (Corners (turn_cw n) (turn_ccw r) o p (turn_cw m) (turn_ccw q) s t))
+move_R (Cube (Edges a b c d e f g h i j k l)
+             (Corners m n o p q r s t)) =
+             (Cube (Edges a b c e l f g d i j k h)
+             (Corners (turn_ccw q) n o
+                      (turn_cw m)
+                      (turn_ccw t) r s
+                      (turn_cw p)))
+
 move_F2 x = move_F $ move_F x
 move_F' x = move_F $ move_F $ move_F x
+
+move_F (Cube (Edges a b c d e f g h i j k l)
+             (Corners m n o p q r s t)) =
+             (Cube (Edges (f) b c d (inverted a) (inverted i) g h (e) j k l)
+             (Corners (turn_cw n)
+                      (turn_ccw r) o p
+                      (turn_ccw m)
+                      (turn_cw q) s t))
 
 -- Since the expression is evaluated right to left, we must write the Cube algorithm reversed
 -- R2 U' R' U' R U R U R U' R
 perm_ua x = move_R2 $ move_U' $ move_R' $ move_U' $ move_R $ move_U $ move_R $ move_U $ move_R $ move_U' $ move_R x
 -- R' U R' U' R' U' R' U R U R2
 perm_ub x = move_R' $ move_U $ move_R' $ move_U' $ move_R' $ move_U' $ move_R' $ move_U $ move_R $ move_U $ move_R2 x
+
+-- Dummy cycles for testing
+-- All three should be of size 105 since they are the same cycle, but rotated
+dummy_ru x = move_U $ move_R x
+dummy_fu x = move_U $ move_F x
+dummy_rf x = move_F $ move_R x
+dummy_fr x = move_R $ move_F x
+
+-- Finds the size of a cycle
+cycleSize x = 1 + (length $ takeWhile (\y -> isSolved y == False) $ iterate x (x solved))
+cycleTest = map cycleSize [dummy_ru, dummy_fu, dummy_rf, dummy_fr]
 
 -- Some simple tests
 -- it should return True always
